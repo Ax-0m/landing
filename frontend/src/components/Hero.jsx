@@ -79,6 +79,7 @@ export default function Hero() {
   const crownOp = useTransform(p, [0.12, 0.19], [1, 0]);
 
   const railProgress = useTransform(p, [INTRO_END, EXIT_START], [0, 1]);
+  const railOpacity = useTransform(p, [0.16, INTRO_END, EXIT_START, EXIT_START + 0.04], [0, 1, 1, 0]);
 
   useMotionValueEvent(p, "change", (v) => {
     const c = v < INTRO_END ? -1 : Math.min(4, Math.floor((v - INTRO_END) / CHAPTER));
@@ -268,7 +269,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <Rail chapter={chapter} />
+        <Rail chapter={chapter} opacity={railOpacity} />
         <motion.div className="filmProgress" style={{ scaleX: railProgress }} aria-hidden="true" />
       </div>
       <BottomBar shown={barShown} />
@@ -276,39 +277,39 @@ export default function Hero() {
   );
 }
 
-function Rail({ chapter }) {
+function Rail({ chapter, opacity }) {
   return (
-    <div className="rail" aria-hidden="true" data-testid="chapter-rail">
+    <motion.div className="rail" style={{ opacity }} aria-hidden="true" data-testid="chapter-rail">
       {C.screens.map((s, i) => (
         <div key={s.id} className={`railItem ${chapter === i ? "on" : ""}`} data-testid={`rail-${s.id}`}>
           <span className="railLabel">{s.label}</span>
           <span className="railDash" />
         </div>
       ))}
-    </div>
+    </motion.div>
   );
 }
 
 function FakeCursor({ screenId, shown }) {
   const steps = C.cursor[screenId] || [];
-  const [step, setStep] = useState(0);
+  const first = steps[0] || null;
+  const [at, setAt] = useState(first);
   const [tap, setTap] = useState(0);
 
   useEffect(() => {
-    setStep(0);
     if (!shown || !steps.length) return;
-    const timers = steps.map((s, i) =>
+    setAt(steps[0]);
+    const timers = steps.map((s) =>
       setTimeout(() => {
-        setStep(i);
+        setAt(s);
         setTap((t) => t + 1);
       }, s.t * 1000)
     );
     return () => timers.forEach(clearTimeout);
-  }, [screenId, shown, steps.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [screenId, shown]);
 
-  if (!shown || !steps.length) return null;
-  const at = steps[step] || steps[0];
-  if (!at) return null;
+  if (!shown || !at) return null;
 
   return (
     <motion.div
