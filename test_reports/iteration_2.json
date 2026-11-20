@@ -1,0 +1,21 @@
+{
+  "summary": "Bug-verification retest for FakeCursor crash. Main agent rewrote FakeCursor to hold the active step object in state keyed by screen id, and Rail now consumes an opacity motion value. Stress-scrolled 1920x1080: 3 full cycles of fast forward through all 5 chapters + reverse to hero, plus 2 smooth-scroll forward/back passes. Captured both pageerror and console errors -> 0 page errors, 0 console errors. Confirmed no 'undefined is not an object (evaluating at.x)'. Regression checks all pass: fake-cursor shows during chapters and is absent at hero; chapter-rail opacity ~1 during chapters, ~0 at hero; nav-item-<id>, window-url ('crowned.com / <id>') and caption-<id> with 01/05..05/05 index all correct for every chapter; marquee, how-it-works, faq (items expand), closing, footer all render; no horizontal overflow at 1920x1080 or 390x844.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "FakeCursor fix is clean: component is keyed by shot.id (<FakeCursor key={shot.id} screenId={shot.id} .../>) and stores the step object (not an index). The early return `if (!shown || !at) return null` guards the first frame, and the fallback `steps[0] || null` protects against an unknown screen id. Race condition eliminated.",
+    "Minor: Rail fade-out window is very narrow (EXIT_START to EXIT_START+0.04 = 0.98 -> 1.02 vs scroll clamp 1.0), so at the very bottom of the film the rail still shows ~0.5 opacity before the section ends. Cosmetic only."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "seed_data_creation": "none",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Bug from iteration_1 (FakeCursor at.x crash) is fully resolved via keyed remount + step-object state. No further action needed on this page."
+}

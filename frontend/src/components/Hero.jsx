@@ -79,7 +79,7 @@ export default function Hero() {
   const crownOp = useTransform(p, [0.12, 0.19], [1, 0]);
 
   const railProgress = useTransform(p, [INTRO_END, EXIT_START], [0, 1]);
-  const railOpacity = useTransform(p, [0.16, INTRO_END, EXIT_START, EXIT_START + 0.04], [0, 1, 1, 0]);
+  const railOpacity = useTransform(p, [0.16, INTRO_END, EXIT_START - 0.04, EXIT_START], [0, 1, 1, 0]);
 
   useMotionValueEvent(p, "change", (v) => {
     const c = v < INTRO_END ? -1 : Math.min(4, Math.floor((v - INTRO_END) / CHAPTER));

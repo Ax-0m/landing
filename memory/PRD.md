@@ -46,3 +46,7 @@ Implemented:
 
 ## Backlog
 - Awaiting further user review notes from the preview.
+
+### Bug fix (2026-11-20)
+- FakeCursor crash ("undefined is not an object (evaluating 'at.x')"): rewritten to store the active step object in state (no index) + keyed remount per screen id. Verified by testing agent iteration_2: 0 page errors after 5 stress scroll cycles, all regressions pass.
+- Chapter rail now fades in/out with the film instead of showing over the hero.
