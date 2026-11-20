@@ -1,0 +1,28 @@
+{
+  "summary": "Frontend-only review of Crowned fan landing page. Verified hero, scroll-driven window film with 5 chapters (certificate, checkout, limits, gifter-test, reviews), edge-to-edge window at intro end (1920x1080 bounding box), window URL pill updates per chapter, left nav highlights, chapter rail stays in sync, glass caption shows 01/05..05/05 label + heading, fake cursor appears on desktop. Animated values verified: checkout totals animate $26->$27.50->$33->$55 as chip changes, limits bars fill (622/466 px), gifter-test %: 82/66/74/90, reviews ring reaches $100. Mobile 390x844: no horizontal overflow, mobile-bar at y=763 while caption bottom at y=595 (no overlap), mobile-cta visible. Marquee, HowItWorks, FAQ (all 4 items expand), closing CTA, footer all render and work. Theme is fully monochrome. Fixed one critical pageerror in FakeCursor on chapter transitions.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "FakeCursor (Hero.jsx)", "issue": "On chapter transition, stale step index exceeds new steps array -> runtime TypeError: Cannot read properties of undefined (reading 'x'). Fixed in this iteration with fallback to steps[0] + null guard.", "selector": "[data-testid=fake-cursor]", "priority": "HIGH-FIXED"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "ClosingCard section", "issues": ["data-testid is 'closing' on section but task spec mentioned 'closing-cta' (which is present on the button). Minor spec mismatch - the CTA button has correct testid."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Review the FakeCursor fix in /app/frontend/src/components/Hero.jsx (lines 309-311). Consider resetting `step` state synchronously with screenId change via a derived state pattern instead of useEffect to avoid the fallback altogether."
+  ],
+  "critical_code_review_comments": [
+    "Hero.jsx FakeCursor: useEffect resets step on screenId change but React renders with stale step first, causing out-of-bounds access. Current fix uses fallback; a cleaner approach is keyed remount (<FakeCursor key={screenId}/>) so the component re-initializes with fresh state.",
+    "Scroll film uses fixed thresholds (INTRO_END, CHAPTER constants). Works correctly but any change to screens array length will desync chapter mapping.",
+    "Checkout animated price overshoots observed values ($26.04 while chip is $25) due to spring overshoot on useAmount animation - purely cosmetic."
+  ],
+  "updated_files": ["/app/frontend/src/components/Hero.jsx"],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "seed_data_creation": "none",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "No backend. Film section is 7560px tall (700vh) at 1920x1080; film_top=76, scroll_range=6480. Chapter mid-points: p = 0.24 + 0.148*(i+0.5). Use wait_until='domcontentloaded' + explicit wait (not networkidle) because framer-motion keeps network busy-ish. Caption glass at bottom of window; on mobile it moves above the mobile-bar (bottom:88px)."
+}

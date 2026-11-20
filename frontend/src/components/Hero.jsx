@@ -184,7 +184,7 @@ export default function Hero() {
               )}
             </div>
 
-            {!narrow && <FakeCursor screenId={shot.id} shown={chapter >= 0} />}
+            {!narrow && <FakeCursor key={shot.id} screenId={shot.id} shown={chapter >= 0} />}
           </motion.div>
         </motion.div>
 
@@ -307,7 +307,8 @@ function FakeCursor({ screenId, shown }) {
   }, [screenId, shown, steps.length]);
 
   if (!shown || !steps.length) return null;
-  const at = steps[step];
+  const at = steps[step] || steps[0];
+  if (!at) return null;
 
   return (
     <motion.div

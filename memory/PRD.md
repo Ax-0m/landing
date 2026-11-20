@@ -28,3 +28,21 @@ Marketing landing page for FANS (gifters) of the Crowned gifting platform, answe
 
 ## Backlog (not requested)
 - None stated; awaiting user follow-ups from preview review.
+
+## Redesign v2 — "posh, edge-to-edge, monochrome" (2026-11-20, forked session)
+User follow-ups: make it fancier/posh like youpay.co, window must cover the screen **edge to edge**, **black & white only** (brand), information displayed better, smoother hero exit.
+User choices (ask_human): glass caption panel over the window, chapter progress rail, fake moving cursor inside the window, animated numbers/progress bars.
+
+Implemented:
+- Monochrome token set (ink #0A0A0B, paper #FFFFFF, bg #F5F5F6, grey hairlines, grey "silver" gradient). All gold/ivory/colour removed, incl. radar axis colours and the red blocked state.
+- Display face switched to Instrument Serif (editorial headings) + Inter Tight for product UI, Source Sans 3 body.
+- Window is now 100vw x 100svh: scales 0.78 → 1 with border-radius 38px → 0 (CSS var `--win-r` driven by a motion value), so it lands truly edge to edge; spring-smoothed scrollYProgress (`useSpring`) makes the hero → film and film → exit transitions glide.
+- Hero: masked line-by-line headline reveal on load, eyebrow pill, cascading exit (actions → sub → title) with blur; window sits behind at 58% opacity + blur and sharpens as the hero leaves; crown lifted out of the window wrapper so it stays crisp.
+- Window chrome: traffic lights, URL pill (`crowned.com / <screen>`), "Sample data" chip, left product nav with lucide icons + active tick, member footer, faint crown watermark.
+- Glass caption panel (bottom-left, backdrop blur) with 01/05 chapter index, AnimatePresence blur/slide between chapters; callouts moved left of the content column; chapter rail right; 2px film progress bar.
+- Fake cursor with tap ripple, coordinates per screen in content.js; counters for checkout receipt, gifter-test percentages and the $100 ring; progress bars animate on activation.
+- Marquee strip, bento-style How it works grid, two-column FAQ, black closing card, refined footer.
+- Testing agent iteration_1: frontend 100% (5 chapters, rail/nav/caption sync, animated values, mobile 390x844 no overlap/overflow, monochrome confirmed). FakeCursor out-of-range crash fixed (keyed remount).
+
+## Backlog
+- Awaiting further user review notes from the preview.
