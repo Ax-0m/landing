@@ -50,3 +50,10 @@ Implemented:
 ### Bug fix (2026-11-20)
 - FakeCursor crash ("undefined is not an object (evaluating 'at.x')"): rewritten to store the active step object in state (no index) + keyed remount per screen id. Verified by testing agent iteration_2: 0 page errors after 5 stress scroll cycles, all regressions pass.
 - Chapter rail now fades in/out with the film instead of showing over the hero.
+
+## Iteration 3 (2026-11-20) — portraits, reflections, dark finale, working pointer
+- Creator Faces: monograms replaced with grayscale Unsplash portraits (certificate avatar with corner marks + scan line, reviews header, window nav footer). URLs live in content.js (`certificate.avatar`, `reviews.avatar`).
+- Window Reflections: `.winSheen` band sweeps across the glass, x driven by scroll progress (3 passes); inverts to a white sheen in dark mode.
+- Dark Finale: the reviews chapter flips the window to a dark token set (`.appWindow.dark` overrides --paper/--ink/--hairline etc.), with dark caption glass, rail, callouts and a `stageDark` backdrop faded by scroll progress; the closing section + footer are now fully black and the header switches to dark glass (`onDark`) over them.
+- Pointer fix: FakeCursor no longer uses hard-coded % coordinates — it queries `.screen.active [data-cursor]` targets, springs x/y to each one, loops, and adds a `.cursorPress` press effect on arrival. Targets tagged in Screens.jsx (avatar, certified pill, amount chips, total row, limit rows, radar, preference chip, ring, unlock row).
+- Testing agent iteration_3: frontend 100% — cursor movement verified across 6 unique positions + press feedback, portraits load, sheen transform changes, dark finale + header switch verified, no console errors, no overflow at 1920x1080 or 390x844.
