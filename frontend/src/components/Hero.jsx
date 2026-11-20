@@ -80,6 +80,15 @@ export default function Hero() {
 
   const railProgress = useTransform(p, [INTRO_END, EXIT_START], [0, 1]);
   const railOpacity = useTransform(p, [0.16, INTRO_END, EXIT_START - 0.04, EXIT_START], [0, 1, 1, 0]);
+  const darkOpacity = useTransform(
+    p,
+    [INTRO_END + CHAPTER * 3.75, INTRO_END + CHAPTER * 4.2, EXIT_START - 0.03, EXIT_START + 0.01],
+    [0, 1, 1, 0]
+  );
+  const sheenX = useTransform(    p,
+    [INTRO_END, 0.52, 0.5201, 0.78, 0.7801, EXIT_START],
+    ["-45vw", "145vw", "-45vw", "145vw", "-45vw", "145vw"]
+  );
 
   useMotionValueEvent(p, "change", (v) => {
     const c = v < INTRO_END ? -1 : Math.min(4, Math.floor((v - INTRO_END) / CHAPTER));
@@ -135,6 +144,7 @@ export default function Hero() {
 
   const active = chapter < 0 ? 0 : chapter;
   const shot = C.screens[active];
+  const dark = chapter === C.screens.length - 1;
 
   return (
     <section className="film" ref={filmRef} data-testid="film">
@@ -142,6 +152,7 @@ export default function Hero() {
         <div className="glow" aria-hidden="true" />
         <div className="hairRing ring1" aria-hidden="true" />
         <div className="hairRing ring2" aria-hidden="true" />
+        <motion.div className="stageDark" aria-hidden="true" style={{ opacity: darkOpacity }} />
 
         <motion.div
           className="windowWrap"
@@ -149,14 +160,14 @@ export default function Hero() {
           data-testid="window-wrap"
         >
           <motion.div className="windowTilt" style={{ rotateX: rotX, rotateY: rotY, "--win-r": winRpx }}>
-            <AppWindow label={shot.label} active={active}>
+            <AppWindow label={shot.label} active={active} dark={dark} sheenX={sheenX}>
               <ScreenRenderer active={active} reduce={reduce} />
             </AppWindow>
 
             <AnimatePresence mode="wait">
               {chapter >= 0 && (
                 <motion.div
-                  className="captionGlass"
+                  className={`captionGlass ${dark ? "dark" : ""}`}
                   key={shot.id}
                   data-testid={`caption-${shot.id}`}
                   initial={{ opacity: 0, y: 22, filter: "blur(10px)" }}
@@ -175,7 +186,7 @@ export default function Hero() {
               )}
             </AnimatePresence>
 
-            <div className="calloutCol" aria-hidden="true">
+            <div className={`calloutCol ${dark ? "dark" : ""}`} aria-hidden="true">
               {C.screens.map((s, i) =>
                 s.callouts.map((c) => (
                   <div key={c.text} className={`callout ${chapter === i ? "on" : ""}`} style={{ top: c.top }}>
@@ -185,7 +196,7 @@ export default function Hero() {
               )}
             </div>
 
-            {!narrow && <FakeCursor key={shot.id} screenId={shot.id} shown={chapter >= 0} />}
+            {!narrow && <FakeCursor stageRef={stageRef} chapter={chapter} screenId={shot.id} />}
           </motion.div>
         </motion.div>
 
@@ -269,7 +280,7 @@ export default function Hero() {
           </div>
         </div>
 
-        <Rail chapter={chapter} opacity={railOpacity} />
+        <Rail chapter={chapter} opacity={railOpacity} dark={dark} />
         <motion.div className="filmProgress" style={{ scaleX: railProgress }} aria-hidden="true" />
       </div>
       <BottomBar shown={barShown} />
@@ -277,9 +288,9 @@ export default function Hero() {
   );
 }
 
-function Rail({ chapter, opacity }) {
+function Rail({ chapter, opacity, dark }) {
   return (
-    <motion.div className="rail" style={{ opacity }} aria-hidden="true" data-testid="chapter-rail">
+    <motion.div className={`rail ${dark ? "dark" : ""}`} style={{ opacity }} aria-hidden="true" data-testid="chapter-rail">
       {C.screens.map((s, i) => (
         <div key={s.id} className={`railItem ${chapter === i ? "on" : ""}`} data-testid={`rail-${s.id}`}>
           <span className="railLabel">{s.label}</span>
@@ -290,34 +301,69 @@ function Rail({ chapter, opacity }) {
   );
 }
 
-function FakeCursor({ screenId, shown }) {
-  const steps = C.cursor[screenId] || [];
-  const first = steps[0] || null;
-  const [at, setAt] = useState(first);
+function FakeCursor({ chapter, screenId }) {
+  const x = useSpring(0, { stiffness: 58, damping: 17, mass: 0.7 });
+  const y = useSpring(0, { stiffness: 58, damping: 17, mass: 0.7 });
+  const [ready, setReady] = useState(false);
   const [tap, setTap] = useState(0);
 
   useEffect(() => {
-    if (!shown || !steps.length) return;
-    setAt(steps[0]);
-    const timers = steps.map((s) =>
-      setTimeout(() => {
-        setAt(s);
-        setTap((t) => t + 1);
-      }, s.t * 1000)
-    );
-    return () => timers.forEach(clearTimeout);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [screenId, shown]);
+    if (chapter < 0) {
+      setReady(false);
+      return;
+    }
+    let alive = true;
+    let i = 0;
+    const timers = new Set();
+    const wait = (fn, ms) => {
+      const t = setTimeout(() => {
+        timers.delete(t);
+        if (alive) fn();
+      }, ms);
+      timers.add(t);
+      return t;
+    };
 
-  if (!shown || !at) return null;
+    const hop = () => {
+      const frame = document.querySelector(".windowTilt");
+      const els = Array.from(document.querySelectorAll(".screen.active [data-cursor]")).sort(
+        (a, b) => Number(a.dataset.cursor) - Number(b.dataset.cursor)
+      );
+      if (!frame || !els.length) {
+        wait(hop, 350);
+        return;
+      }
+      const el = els[i % els.length];
+      i += 1;
+      const r = el.getBoundingClientRect();
+      const f = frame.getBoundingClientRect();
+      x.set(r.left - f.left + Math.min(r.width * 0.42, 120));
+      y.set(r.top - f.top + r.height * 0.6);
+      setReady(true);
+      wait(() => {
+        el.classList.add("cursorPress");
+        setTap((t) => t + 1);
+        wait(() => el.classList.remove("cursorPress"), 520);
+      }, 760);
+      wait(hop, 2100);
+    };
+
+    wait(hop, 650);
+    return () => {
+      alive = false;
+      timers.forEach(clearTimeout);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chapter, screenId]);
 
   return (
     <motion.div
       className="fakeCursor"
       data-testid="fake-cursor"
+      style={{ x, y }}
       initial={false}
-      animate={{ left: `${at.x}%`, top: `${at.y}%`, opacity: 1 }}
-      transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+      animate={{ opacity: ready && chapter >= 0 ? 1 : 0 }}
+      transition={{ duration: 0.4 }}
     >
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path d="M5 2.5l13.2 8.1-5.6 1-2.6 5.4L5 2.5z" fill="#0A0A0B" stroke="#fff" strokeWidth="1.2" />
@@ -325,9 +371,9 @@ function FakeCursor({ screenId, shown }) {
       <motion.span
         className="cursorTap"
         key={tap}
-        initial={{ scale: 0.2, opacity: 0.8 }}
-        animate={{ scale: 1.5, opacity: 0 }}
-        transition={{ duration: 0.9, ease: "easeOut" }}
+        initial={{ scale: 0.2, opacity: 0.75 }}
+        animate={{ scale: 1.8, opacity: 0 }}
+        transition={{ duration: 0.85, ease: "easeOut" }}
       />
     </motion.div>
   );

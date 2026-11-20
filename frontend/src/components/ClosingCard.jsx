@@ -4,7 +4,7 @@ import * as C from "../content";
 
 export default function ClosingCard() {
   return (
-    <section className="section" data-testid="closing">
+    <section className="section finale" data-testid="closing">
       <div className="container">
         <motion.div
           className="closingCard"

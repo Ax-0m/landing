@@ -5,6 +5,7 @@ import * as C from "../content";
 export default function Header() {
   const [stuck, setStuck] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [onDark, setOnDark] = useState(false);
 
   useEffect(() => {
     let raf = 0;
@@ -14,9 +15,11 @@ export default function Header() {
         raf = 0;
         const y = window.scrollY;
         const film = document.querySelector('[data-testid="film"]');
+        const fin = document.querySelector('[data-testid="closing"]');
         const inFilm = film ? film.getBoundingClientRect().bottom > window.innerHeight * 1.1 : false;
         setStuck(y > 24);
         setHidden(inFilm && y > window.innerHeight * 0.45);
+        setOnDark(fin ? fin.getBoundingClientRect().top <= 160 : false);
       });
     };
     onScroll();
@@ -29,7 +32,7 @@ export default function Header() {
 
   return (
     <motion.header
-      className={`header ${stuck ? "stuck" : ""}`}
+      className={`header ${stuck ? "stuck" : ""} ${onDark ? "onDark" : ""}`}
       data-testid="header"
       animate={{ y: hidden ? -90 : 0, opacity: hidden ? 0 : 1 }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}

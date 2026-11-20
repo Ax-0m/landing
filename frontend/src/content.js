@@ -56,6 +56,8 @@ export const screens = [
 ];
 
 export const certificate = {
+  avatar:
+    "https://images.unsplash.com/photo-1506863530036-1efeddceb993?crop=entropy&cs=srgb&fm=jpg&w=400&q=80",
   monogram: "M",
   handle: "@maya",
   pill: "Certified",
@@ -104,6 +106,8 @@ export const gifterTest = {
 };
 
 export const reviews = {
+  avatar:
+    "https://images.unsplash.com/photo-1587668223851-c157d8d353ab?crop=entropy&cs=srgb&fm=jpg&w=240&q=80",
   monogram: "M",
   name: "Member profile",
   pill: "Verified Member",
@@ -161,29 +165,6 @@ export const windowChrome = {
   state: "Sample data",
 };
 
-export const cursor = {
-  certificate: [
-    { x: 35, y: 46, t: 0.6 },
-    { x: 76, y: 56, t: 2.2 },
-  ],
-  checkout: [
-    { x: 43, y: 41, t: 0.6 },
-    { x: 39, y: 41, t: 2.2 },
-    { x: 77, y: 73, t: 3.8 },
-  ],
-  limits: [
-    { x: 78, y: 41, t: 0.7 },
-    { x: 70, y: 62, t: 2.4 },
-  ],
-  "gifter-test": [
-    { x: 38, y: 46, t: 0.7 },
-    { x: 36, y: 65, t: 2.4 },
-  ],
-  reviews: [
-    { x: 63, y: 57, t: 0.7 },
-    { x: 63, y: 69, t: 2.3 },
-  ],
-};
 
 export const footer = {
   brand: "Powered by Crowned",

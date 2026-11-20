@@ -6,10 +6,10 @@ import * as C from "../content";
 function Seal({ size = 16 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" aria-hidden="true">
-      <circle cx="8" cy="8" r="8" fill="#0A0A0B" />
+      <circle cx="8" cy="8" r="8" fill="currentColor" />
       <path
         d="M4.8 8.2l2.1 2.1 4.3-4.5"
-        stroke="#fff"
+        stroke="var(--paper)"
         strokeWidth="1.6"
         fill="none"
         strokeLinecap="round"
@@ -57,8 +57,8 @@ export function CertificateScreen({ active }) {
       <div className="screenInner">
         <Head i={0} />
         <div className="certTop">
-          <div className="avatarWrap">
-            <div className="monogram">{d.monogram}</div>
+          <div className="avatarWrap" data-cursor="1">
+            <img src={d.avatar} alt="" className="avatarPhoto" />
             <span className="corner tl" />
             <span className="corner tr" />
             <span className="corner bl" />
@@ -67,15 +67,15 @@ export function CertificateScreen({ active }) {
           </div>
           <div className="certId">
             <div className="handle">{d.handle}</div>
-            <span className="pill">
+            <span className="pill" data-cursor="2">
               <Seal /> {d.pill}
             </span>
             <div className="statusLine">{d.status}</div>
           </div>
         </div>
         <div className="rows">
-          {d.rows.map(([k, v]) => (
-            <div className="row" key={k}>
+          {d.rows.map(([k, v], i) => (
+            <div className="row" key={k} data-cursor={i === 1 ? "3" : undefined}>
               <span className="rowKey">{k}</span>
               <span className="rowVal">{v}</span>
             </div>
@@ -110,7 +110,11 @@ export function CheckoutScreen({ active, reduce }) {
           <div className="giftCardTitle">{d.title}</div>
           <div className="chipRow">
             {d.amounts.map((a) => (
-              <span key={a} className={`chip ${a === sel ? "chipOn" : ""}`}>
+              <span
+                key={a}
+                className={`chip ${a === sel ? "chipOn" : ""}`}
+                data-cursor={a === d.second ? "1" : a === d.first ? "2" : undefined}
+              >
                 ${a}
               </span>
             ))}
@@ -132,7 +136,7 @@ export function CheckoutScreen({ active, reduce }) {
             <span className="rowKey">Fee</span>
             <span className="rowVal tnum">{fmt(fee)}</span>
           </div>
-          <div className="rowTotal">
+          <div className="rowTotal" data-cursor="3">
             <span>Total</span>
             <span className="tnum">{fmt(total)}</span>
           </div>
@@ -153,7 +157,7 @@ export function LimitsScreen({ active, reduce }) {
     <div className={`screen ${active ? "active" : ""}`} data-testid="screen-limits">
       <div className="screenInner">
         <Head i={2} />
-        <div className="limRow">
+        <div className="limRow" data-cursor="1">
           <div className="limHead">
             <span className="rowKey">{d.monthly.label}</span>
             <span className="rowVal tnum">{d.monthly.value}</span>
@@ -180,7 +184,7 @@ export function LimitsScreen({ active, reduce }) {
         <motion.div className="blocked" variants={item} custom={1.4} initial="hide" animate={a}>
           {d.blocked}
         </motion.div>
-        <motion.div className="editRow" variants={item} custom={2.4} initial="hide" animate={a}>
+        <motion.div className="editRow" variants={item} custom={2.4} initial="hide" animate={a} data-cursor="2">
           <span className="rowKey">{d.lower.label}</span>
           <span className="rowVal editVal">
             {d.lower.value}
@@ -227,7 +231,7 @@ export function TestScreen({ active, reduce }) {
       <div className="screenInner wide">
         <Head i={3} />
         <div className="testTop">
-          <div className="radarWrap">
+          <div className="radarWrap" data-cursor="1">
             <svg viewBox="0 0 190 190" role="img" aria-label="Gifter Test results">
               {[22, 44, 66].map((r) => (
                 <polygon key={r} points={grid(r)} className="gridPoly" />
@@ -237,12 +241,12 @@ export function TestScreen({ active, reduce }) {
               ))}
               <polygon points={poly} className="polyData" />
               {d.axes.map((ax, i) => (
-                <circle key={ax.name} cx={pt(i)[0]} cy={pt(i)[1]} r="3.5" fill="#0A0A0B" className="polyDot" />
+                <circle key={ax.name} cx={pt(i)[0]} cy={pt(i)[1]} r="3.5" fill="currentColor" className="polyDot" />
               ))}
             </svg>
             {d.axes.map((ax, i) => (
               <span key={ax.name} className={`radarLabel ${lblCls[i]}`} style={pos[i]}>
-                <i style={{ background: "#0A0A0B", opacity: 0.35 + i * 0.16 }} />
+                <i style={{ background: "currentColor", opacity: 0.35 + i * 0.16 }} />
                 {ax.name}
               </span>
             ))}
@@ -260,6 +264,7 @@ export function TestScreen({ active, reduce }) {
               <motion.span
                 key={pref}
                 className="chip"
+                data-cursor={i === 1 ? "2" : undefined}
                 initial={false}
                 animate={active ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
                 transition={{ duration: 0.35, delay: reduce ? 0 : 0.9 + i * 0.14 }}
@@ -290,14 +295,15 @@ function AxisRow({ ax, i, active, reduce }) {
   const shade = 0.78 - i * 0.14;
   return (
     <div className="tRow">
-      <span className="tDot" style={{ background: `rgba(10,10,11,${shade})` }} />
+      <span className="tDot" style={{ background: "currentColor", opacity: shade }} />
       <span className="tName">{ax.name}</span>
       <span className="tBar">
         <span
           className="tBarFill"
           style={{
             width: active ? `${ax.v * 100}%` : "0%",
-            background: `rgba(10,10,11,${shade})`,
+            background: "currentColor",
+            opacity: shade,
             transition: reduce ? "none" : `width 0.8s cubic-bezier(0.22,1,0.36,1) ${0.4 + i * 0.12}s`,
           }}
         />
@@ -316,11 +322,15 @@ export function ReviewsScreen({ active, reduce }) {
       <div className="screenInner">
         <Head i={4} />
         <div className="revTop">
-          <div className="monogram sm">{d.monogram}</div>
+          <span className="avatarSm">
+            <img src={d.avatar} alt="" />
+          </span>
           <div className="revName">{d.name}</div>
-          <span className="pill">{d.pill}</span>
+          <span className="pill" data-cursor="3">
+            {d.pill}
+          </span>
         </div>
-        <div className="ringWrap">
+        <div className="ringWrap" data-cursor="1">
           <svg viewBox="0 0 132 132" role="img" aria-label="Gifted $100">
             <circle cx="66" cy="66" r="56" className="ringTrack" />
             <circle
@@ -343,6 +353,7 @@ export function ReviewsScreen({ active, reduce }) {
         </div>
         <motion.div
           className="unlock"
+          data-cursor="2"
           initial={false}
           animate={active ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
           transition={{ duration: 0.35, delay: reduce ? 0 : 1.5 }}

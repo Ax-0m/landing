@@ -183,6 +183,22 @@ h3 {
   -webkit-backdrop-filter: blur(16px) saturate(140%);
   border-bottom-color: var(--hairline-2);
 }
+.header.onDark.stuck {
+  background: rgba(5, 5, 6, 0.74);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+.header.onDark .wordmark img {
+  filter: invert(1) brightness(1.6);
+}
+.header.onDark .btnOutline {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+}
+.header.onDark .btnOutline:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.4);
+}
 .headerIn {
   height: 100%;
   display: flex;
@@ -666,14 +682,15 @@ h3 {
   transform: translateY(18px) scale(0.985);
   filter: blur(6px);
   transition: opacity 0.6s var(--ease), transform 0.6s var(--ease), filter 0.6s var(--ease),
-    visibility 0s linear 0.6s;
+    color 0.8s var(--ease), visibility 0s linear 0.6s;
 }
 .screen.active {
   opacity: 1;
   visibility: visible;
   transform: none;
   filter: none;
-  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease), filter 0.6s var(--ease);
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease), filter 0.6s var(--ease),
+    color 0.8s var(--ease);
 }
 .screenInner {
   width: 100%;
@@ -1018,7 +1035,8 @@ h3 {
   stroke-width: 1;
 }
 .polyData {
-  fill: rgba(10, 10, 11, 0.07);
+  fill: currentColor;
+  fill-opacity: 0.08;
   stroke: var(--gold);
   stroke-width: 1.5;
   transform-box: fill-box;
@@ -1043,7 +1061,7 @@ h3 {
   display: flex;
   align-items: center;
   gap: 5px;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--paper);
   padding: 2px 6px;
   border-radius: 5px;
   white-space: nowrap;
@@ -1287,6 +1305,8 @@ h3 {
 /* ---------- fake cursor ---------- */
 .fakeCursor {
   position: absolute;
+  left: 0;
+  top: 0;
   z-index: 9;
   width: 26px;
   height: 26px;
@@ -1353,6 +1373,201 @@ h3 {
   font-weight: 500;
   box-shadow: 0 10px 26px -18px rgba(10, 10, 11, 0.7);
   white-space: nowrap;
+}
+
+/* ---------- portraits, sheen, cursor feedback, dark finale ---------- */
+.avatarPhoto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  filter: grayscale(1) contrast(1.06);
+  background: var(--pill-bg);
+}
+.avatarSm {
+  width: 48px;
+  height: 48px;
+  flex: none;
+  border-radius: 50%;
+  overflow: hidden;
+  display: block;
+  box-shadow: 0 0 0 1px var(--hairline);
+}
+.avatarSm img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.06);
+}
+@media (min-width: 1400px) {
+  .avatarSm {
+    width: 54px;
+    height: 54px;
+  }
+}
+
+.winSheen {
+  position: absolute;
+  top: -20%;
+  left: 0;
+  width: 34vw;
+  height: 140%;
+  z-index: 3;
+  pointer-events: none;
+  transform-origin: center;
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(10, 10, 11, 0.035) 45%,
+    rgba(255, 255, 255, 0.7) 52%,
+    rgba(10, 10, 11, 0.02) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  mix-blend-mode: multiply;
+}
+.appWindow.dark .winSheen {
+  mix-blend-mode: screen;
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.06) 45%,
+    rgba(255, 255, 255, 0.16) 52%,
+    rgba(255, 255, 255, 0.05) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+[data-cursor] {
+  transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease);
+}
+.cursorPress {
+  transform: scale(0.975);
+  box-shadow: 0 0 0 1px var(--hairline), 0 10px 24px -18px rgba(10, 10, 11, 0.8);
+}
+
+.stageDark {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: #050506;
+  pointer-events: none;
+}
+
+.appWindow,
+.titleBar,
+.winNav,
+.navItem,
+.chip,
+.pill,
+.giftCard,
+.winUrl,
+.winState,
+.noteChip,
+.radarLabel,
+.captionGlass {
+  transition-property: background-color, background, border-color, color, box-shadow;
+  transition-duration: 0.8s;
+  transition-timing-function: var(--ease);
+}
+.appWindow.dark {
+  --paper: #0d0d0f;
+  --paper-2: #090909;
+  --ink: #f7f7f8;
+  --ink-soft: #d6d6d9;
+  --muted: #8d8d95;
+  --hairline: rgba(255, 255, 255, 0.14);
+  --hairline-2: rgba(255, 255, 255, 0.08);
+  --pill-bg: rgba(255, 255, 255, 0.07);
+  --gold: #ffffff;
+  --champagne: linear-gradient(100deg, #6c6c74, #ffffff 46%, #6c6c74);
+  --silver: linear-gradient(90deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.04));
+  color: var(--ink);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), 0 50px 120px -40px rgba(0, 0, 0, 0.9);
+}
+.appWindow.dark .titleBar,
+.appWindow.dark .winNav {
+  background: rgba(255, 255, 255, 0.025);
+}
+.appWindow.dark .navItem.on {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+.appWindow.dark .chip,
+.appWindow.dark .giftCard {
+  background: rgba(255, 255, 255, 0.04);
+}
+.appWindow.dark .chipOn {
+  background: #ffffff;
+  border-color: #ffffff;
+  color: #0a0a0b;
+}
+.appWindow.dark .bar,
+.appWindow.dark .tBar {
+  background: rgba(255, 255, 255, 0.12);
+}
+.appWindow.dark .ringTrack {
+  stroke: rgba(255, 255, 255, 0.14);
+}
+.appWindow.dark .ringFill {
+  stroke: #ffffff;
+}
+.appWindow.dark .winWatermark {
+  opacity: 0.09;
+  filter: grayscale(1) invert(1);
+}
+.captionGlass.dark {
+  background: rgba(13, 13, 15, 0.72);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #f7f7f8;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset, 0 24px 60px -30px rgba(0, 0, 0, 0.9);
+}
+.captionGlass.dark .capIndex {
+  color: #ffffff;
+}
+.captionGlass.dark .capLine {
+  background: rgba(255, 255, 255, 0.2);
+}
+.captionGlass.dark p {
+  color: #a3a3ab;
+}
+
+.calloutCol.dark .calloutTag {
+  background: rgba(13, 13, 15, 0.82);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #f7f7f8;
+}
+.calloutCol.dark .callout::before {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0));
+}
+.rail.dark .railItem {
+  color: #8d8d95;
+}
+.rail.dark .railItem.on {
+  color: #ffffff;
+}
+.rail.dark .railItem.on .railDash {
+  background: #ffffff;
+}
+
+.section.finale {
+  background: #050506;
+  color: #f7f7f8;
+}
+.section.finale .closingCard {
+  background: #000000;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+.footer.finale {
+  background: #050506;
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+.footer.finale .footerBrand,
+.footer.finale .footerLinks a {
+  color: #8d8d95;
+}
+.footer.finale .footerLinks a:hover {
+  color: #ffffff;
 }
 
 /* ---------- progress bar under header ---------- */

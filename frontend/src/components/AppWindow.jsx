@@ -1,11 +1,12 @@
+import { motion } from "framer-motion";
 import { BadgeCheck, CreditCard, SlidersHorizontal, UserRound, Star } from "lucide-react";
 import * as C from "../content";
 
 const ICONS = [BadgeCheck, CreditCard, SlidersHorizontal, UserRound, Star];
 
-export default function AppWindow({ label, active, children }) {
+export default function AppWindow({ label, active, dark, sheenX, children }) {
   return (
-    <div className="appWindow" data-testid="app-window" aria-label={label}>
+    <div className={`appWindow ${dark ? "dark" : ""}`} data-testid="app-window" aria-label={label}>
       <div className="winEdgeTop" />
       <div className="titleBar">
         <div className="winLights" aria-hidden="true">
@@ -36,7 +37,9 @@ export default function AppWindow({ label, active, children }) {
             );
           })}
           <div className="navFoot">
-            <span className="monogram sm">{C.certificate.monogram}</span>
+            <span className="avatarSm">
+              <img src={C.reviews.avatar} alt="" />
+            </span>
             <span>
               <span className="navFootName">{C.reviews.name}</span>
               <br />
@@ -51,6 +54,7 @@ export default function AppWindow({ label, active, children }) {
           {children}
         </div>
       </div>
+      {sheenX && <motion.div className="winSheen" style={{ x: sheenX }} aria-hidden="true" />}
       <div className="winEdgeBottom" />
     </div>
   );
