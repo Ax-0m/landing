@@ -6,6 +6,7 @@ export const links = {
 export const nav = { cta: "Create a Member profile" };
 
 export const hero = {
+  eyebrow: "A gifting platform for certified creators",
   title: "Gift to certified creators. Set your own limits.",
   sub: "Know who you're gifting to. Control your spending. Fee shown first.",
   cta: "Create a Member profile",
@@ -145,6 +146,43 @@ export const faq = {
 export const closing = {
   title: "Set your limits before you gift.",
   cta: "Create a Member profile",
+};
+
+export const marquee = [
+  "Certified creators",
+  "Fee shown first",
+  "Your limits, enforced",
+  "Reviews from real gifters",
+  "No account needed to gift",
+];
+
+export const windowChrome = {
+  tour: "Product tour",
+  state: "Sample data",
+};
+
+export const cursor = {
+  certificate: [
+    { x: 35, y: 46, t: 0.6 },
+    { x: 76, y: 56, t: 2.2 },
+  ],
+  checkout: [
+    { x: 43, y: 41, t: 0.6 },
+    { x: 39, y: 41, t: 2.2 },
+    { x: 77, y: 73, t: 3.8 },
+  ],
+  limits: [
+    { x: 78, y: 41, t: 0.7 },
+    { x: 70, y: 62, t: 2.4 },
+  ],
+  "gifter-test": [
+    { x: 38, y: 46, t: 0.7 },
+    { x: 36, y: 65, t: 2.4 },
+  ],
+  reviews: [
+    { x: 63, y: 57, t: 0.7 },
+    { x: 63, y: 69, t: 2.3 },
+  ],
 };
 
 export const footer = {
